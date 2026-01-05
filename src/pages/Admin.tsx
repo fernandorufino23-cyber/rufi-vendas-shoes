@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Pencil, Trash2, Save, X, Star, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, Plus, Pencil, Trash2, Save, X, Star, ShoppingBag, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -24,6 +24,10 @@ const emptyProduct: ProductFormData = {
   featured: false,
 };
 
+// Credenciais fixas
+const ADMIN_USER = 'Rufino';
+const ADMIN_PASS = 'Rufino@123';
+
 export default function Admin() {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
   const { toast } = useToast();
@@ -31,6 +35,28 @@ export default function Admin() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<ProductFormData>(emptyProduct);
   const [sizesInput, setSizesInput] = useState('');
+
+  // Estado de login
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loginUser, setLoginUser] = useState('');
+  const [loginPass, setLoginPass] = useState('');
+  const [loginError, setLoginError] = useState('');
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loginUser === ADMIN_USER && loginPass === ADMIN_PASS) {
+      setIsLoggedIn(true);
+      setLoginError('');
+    } else {
+      setLoginError('Usuário ou senha incorretos');
+    }
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setLoginUser('');
+    setLoginPass('');
+  };
 
   const handleEdit = (product: Product) => {
     setEditingId(product.id);
@@ -89,6 +115,66 @@ export default function Admin() {
     }
   };
 
+  // Tela de Login
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+        <div className="w-full max-w-md bg-card rounded-xl border border-border p-8 shadow-card">
+          <div className="flex items-center justify-center gap-2 mb-8">
+            <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center">
+              <ShoppingBag className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <span className="font-display text-2xl tracking-wider">
+              RUFI<span className="text-gradient">VENDAS</span>
+            </span>
+          </div>
+
+          <h2 className="font-display text-2xl text-center mb-6">
+            PAINEL <span className="text-gradient">ADMIN</span>
+          </h2>
+
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div>
+              <Label>Usuário</Label>
+              <Input
+                value={loginUser}
+                onChange={e => setLoginUser(e.target.value)}
+                placeholder="Digite seu usuário"
+                className="mt-1.5"
+              />
+            </div>
+
+            <div>
+              <Label>Senha</Label>
+              <Input
+                type="password"
+                value={loginPass}
+                onChange={e => setLoginPass(e.target.value)}
+                placeholder="Digite sua senha"
+                className="mt-1.5"
+              />
+            </div>
+
+            {loginError && (
+              <p className="text-destructive text-sm text-center">{loginError}</p>
+            )}
+
+            <Button type="submit" className="w-full bg-gradient-primary hover:opacity-90">
+              <LogIn className="w-4 h-4 mr-2" />
+              Entrar
+            </Button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <Link to="/" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
+              ← Voltar para a loja
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -110,12 +196,17 @@ export default function Admin() {
             </div>
           </div>
           
-          {!isEditing && (
-            <Button onClick={handleNew} className="bg-gradient-primary hover:opacity-90">
-              <Plus className="w-4 h-4 mr-2" />
-              Novo Produto
+          <div className="flex items-center gap-3">
+            {!isEditing && (
+              <Button onClick={handleNew} className="bg-gradient-primary hover:opacity-90">
+                <Plus className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Novo Produto</span>
+              </Button>
+            )}
+            <Button variant="outline" onClick={handleLogout}>
+              Sair
             </Button>
-          )}
+          </div>
         </div>
       </header>
 

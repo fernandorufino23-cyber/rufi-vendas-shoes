@@ -69,7 +69,7 @@ export function Footer() {
           <div>
             <h3 className="font-display text-lg mb-4">CONTATO</h3>
             <ul className="space-y-3 text-muted-foreground">
-              <li>WhatsApp: (00) 00000-0000</li>
+              <li>WhatsApp: +244 935 126 871</li>
               <li>contato@rufivendas.com</li>
               <li>Segunda - Sábado</li>
               <li>9h às 18h</li>
