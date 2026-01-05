@@ -236,12 +236,12 @@ export default function Admin() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Preço (R$)</Label>
+                  <Label>Preço (Kz)</Label>
                   <Input
                     type="number"
                     value={formData.price || ''}
                     onChange={e => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-                    placeholder="459.90"
+                    placeholder="15500"
                     className="mt-1.5"
                   />
                 </div>
@@ -251,7 +251,7 @@ export default function Admin() {
                     type="number"
                     value={formData.originalPrice || ''}
                     onChange={e => setFormData({ ...formData, originalPrice: parseFloat(e.target.value) || undefined })}
-                    placeholder="599.90"
+                    placeholder="19900"
                     className="mt-1.5"
                   />
                 </div>
@@ -275,13 +275,27 @@ export default function Admin() {
               </div>
 
               <div>
-                <Label>URL da Imagem</Label>
+                <Label>Imagem do Produto</Label>
                 <Input
-                  value={formData.image}
-                  onChange={e => setFormData({ ...formData, image: e.target.value })}
-                  placeholder="https://exemplo.com/imagem.jpg"
+                  type="file"
+                  accept="image/*"
+                  onChange={e => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setFormData({ ...formData, image: reader.result as string });
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
                   className="mt-1.5"
                 />
+                {formData.image && (
+                  <div className="mt-2 w-20 h-20 rounded-lg overflow-hidden border border-border">
+                    <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                  </div>
+                )}
               </div>
 
               <div>
@@ -364,11 +378,11 @@ export default function Admin() {
                     
                     <div className="text-right mr-4">
                       <div className="font-display text-lg text-gradient">
-                        R$ {product.price.toFixed(2).replace('.', ',')}
+                        {product.price.toLocaleString('pt-AO')} Kz
                       </div>
                       {product.originalPrice && (
                         <div className="text-sm text-muted-foreground line-through">
-                          R$ {product.originalPrice.toFixed(2).replace('.', ',')}
+                          {product.originalPrice.toLocaleString('pt-AO')} Kz
                         </div>
                       )}
                     </div>

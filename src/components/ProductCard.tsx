@@ -61,11 +61,11 @@ export function ProductCard({ product, onBuy }: ProductCardProps) {
         
         <div className="flex items-center gap-3 mt-4">
           <span className="font-display text-2xl text-gradient">
-            R$ {product.price.toFixed(2).replace('.', ',')}
+            {product.price.toLocaleString('pt-AO')} Kz
           </span>
           {product.originalPrice && (
             <span className="text-sm text-muted-foreground line-through">
-              R$ {product.originalPrice.toFixed(2).replace('.', ',')}
+              {product.originalPrice.toLocaleString('pt-AO')} Kz
             </span>
           )}
         </div>
