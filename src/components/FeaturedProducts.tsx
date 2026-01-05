@@ -15,12 +15,12 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
 
   const handleBuy = (product: Product) => {
     const message = encodeURIComponent(
-      `Olá! Tenho interesse no produto:\n\n*${product.name}*\nPreço: R$ ${product.price.toFixed(2).replace('.', ',')}\n\nGostaria de mais informações!`
+      `Olá! Tenho interesse no produto:\n\n*${product.name}*\nPreço: ${product.price.toLocaleString('pt-AO')} Kz\n\nGostaria de mais informações!`
     );
-    window.open(`https://wa.me/?text=${message}`, '_blank');
+    window.open(`https://wa.me/244935126871?text=${message}`, '_blank');
     toast({
       title: "Redirecionando...",
-      description: "Você será direcionado para finalizar sua compra.",
+      description: "Você será direcionado para o WhatsApp.",
     });
   };
 
