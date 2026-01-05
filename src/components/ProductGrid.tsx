@@ -27,8 +27,8 @@ export function ProductGrid({ products }: ProductGridProps) {
       `Olá! Tenho interesse no produto:\n\n*${product.name}*\nPreço: R$ ${product.price.toFixed(2).replace('.', ',')}\n\nGostaria de mais informações!`
     );
     
-    // Open TakeApp or WhatsApp
-    window.open(`https://wa.me/?text=${message}`, '_blank');
+    // Open TakeApp or WhatsApp with number
+    window.open(`https://wa.me/244935126871?text=${message}`, '_blank');
     
     toast({
       title: "Redirecionando...",
