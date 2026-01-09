@@ -61,12 +61,14 @@ export function Hero() {
           </div>
           
           {/* Hero Image */}
-          <div className="relative hidden lg:block animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            <div className="relative">
+          <div className="relative mt-8 lg:mt-0 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+            <div className="relative max-w-xs sm:max-w-sm md:max-w-md lg:max-w-full mx-auto">
               <img 
                 src={heroSneaker} 
                 alt="Tênis em destaque" 
-                className="w-full h-auto animate-float"
+                loading="eager"
+                decoding="async"
+                className="w-full h-auto max-h-[300px] sm:max-h-[400px] md:max-h-[500px] lg:max-h-none object-contain animate-float"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
             </div>
