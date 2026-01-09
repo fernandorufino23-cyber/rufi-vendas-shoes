@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Pencil, Trash2, Save, X, Star, ShoppingBag, LogIn } from 'lucide-react';
+import { ArrowLeft, Plus, Pencil, Trash2, Save, X, Star, ShoppingBag, LogIn, Share2, Facebook, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -113,6 +113,66 @@ export default function Admin() {
       deleteProduct(id);
       toast({ title: 'Produto excluído!', description: name });
     }
+  };
+
+  // Partilhar no Facebook
+  const shareOnFacebook = (product: Product) => {
+    const shareUrl = window.location.origin;
+    const shareText = `🔥 ${product.name} - ${product.price.toLocaleString('pt-AO')} Kz\n\n${product.description || 'Confira este produto incrível!'}\n\n📱 Encomende pelo WhatsApp: +244 935 126 871`;
+    
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`;
+    window.open(facebookUrl, '_blank', 'width=600,height=400');
+    
+    toast({ title: 'Facebook', description: `Partilhando "${product.name}" no Facebook` });
+  };
+
+  // Partilhar todos os produtos no Facebook
+  const shareAllOnFacebook = () => {
+    const shareUrl = window.location.origin;
+    const productList = products.slice(0, 5).map(p => `• ${p.name} - ${p.price.toLocaleString('pt-AO')} Kz`).join('\n');
+    const shareText = `🛍️ RUFIVENDAS - Produtos em Destaque!\n\n${productList}\n\n📱 Encomende pelo WhatsApp: +244 935 126 871`;
+    
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`;
+    window.open(facebookUrl, '_blank', 'width=600,height=400');
+    
+    toast({ title: 'Facebook', description: 'Partilhando todos os produtos no Facebook' });
+  };
+
+  // Partilhar no TikTok (abre o app ou web para criar conteúdo)
+  const shareOnTikTok = (product: Product) => {
+    // TikTok não tem API de partilha direta, mas podemos copiar o texto para o clipboard
+    const shareText = `🔥 ${product.name} - ${product.price.toLocaleString('pt-AO')} Kz\n\n${product.description || ''}\n\n📱 WhatsApp: +244 935 126 871\n\n#RUFIVENDAS #Angola #Tênis #Moda`;
+    
+    navigator.clipboard.writeText(shareText).then(() => {
+      toast({ 
+        title: 'TikTok', 
+        description: 'Texto copiado! Abra o TikTok e cole na descrição do seu vídeo.' 
+      });
+      // Abre o TikTok (se disponível)
+      window.open('https://www.tiktok.com/upload', '_blank');
+    }).catch(() => {
+      toast({ 
+        title: 'TikTok', 
+        description: 'Abra o TikTok para criar conteúdo sobre este produto.',
+      });
+      window.open('https://www.tiktok.com/upload', '_blank');
+    });
+  };
+
+  // Partilhar todos os produtos no TikTok
+  const shareAllOnTikTok = () => {
+    const productList = products.slice(0, 5).map(p => `• ${p.name} - ${p.price.toLocaleString('pt-AO')} Kz`).join('\n');
+    const shareText = `🛍️ RUFIVENDAS - Melhores Produtos!\n\n${productList}\n\n📱 WhatsApp: +244 935 126 871\n\n#RUFIVENDAS #Angola #Tênis #Moda #Sapatos`;
+    
+    navigator.clipboard.writeText(shareText).then(() => {
+      toast({ 
+        title: 'TikTok', 
+        description: 'Texto copiado! Abra o TikTok e cole na descrição.' 
+      });
+      window.open('https://www.tiktok.com/upload', '_blank');
+    }).catch(() => {
+      window.open('https://www.tiktok.com/upload', '_blank');
+    });
   };
 
   // Tela de Login
@@ -339,6 +399,62 @@ export default function Admin() {
         ) : (
           /* Product List */
           <div>
+            {/* Social Media Integration Section */}
+            <div className="bg-card rounded-xl border border-border p-6 mb-8">
+              <h3 className="font-display text-xl mb-4 flex items-center gap-2">
+                <Share2 className="w-5 h-5 text-primary" />
+                SINCRONIZAR <span className="text-gradient">REDES SOCIAIS</span>
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Facebook */}
+                <div className="bg-secondary/50 rounded-lg p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-lg bg-[#1877F2] flex items-center justify-center">
+                      <Facebook className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold">Facebook</h4>
+                      <p className="text-sm text-muted-foreground">Partilhar na sua página</p>
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={shareAllOnFacebook}
+                    className="w-full bg-[#1877F2] hover:bg-[#1877F2]/90 text-white"
+                    disabled={products.length === 0}
+                  >
+                    <Facebook className="w-4 h-4 mr-2" />
+                    Partilhar Todos os Produtos
+                  </Button>
+                </div>
+
+                {/* TikTok */}
+                <div className="bg-secondary/50 rounded-lg p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#ff0050] via-[#00f2ea] to-[#000] flex items-center justify-center">
+                      <span className="font-bold text-white text-sm">TT</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold">TikTok</h4>
+                      <p className="text-sm text-muted-foreground">Criar conteúdo de vídeo</p>
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={shareAllOnTikTok}
+                    className="w-full bg-black hover:bg-black/90 text-white border border-white/20"
+                    disabled={products.length === 0}
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Criar Vídeo no TikTok
+                  </Button>
+                </div>
+              </div>
+
+              <p className="text-xs text-muted-foreground mt-4 text-center">
+                💡 Dica: Também pode partilhar produtos individuais usando os botões de partilha na lista abaixo
+              </p>
+            </div>
+
             <h2 className="font-display text-2xl mb-6">
               PRODUTOS <span className="text-gradient">({products.length})</span>
             </h2>
@@ -387,7 +503,25 @@ export default function Admin() {
                       )}
                     </div>
                     
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => shareOnFacebook(product)}
+                        title="Partilhar no Facebook"
+                        className="text-[#1877F2] hover:text-[#1877F2] hover:bg-[#1877F2]/10"
+                      >
+                        <Facebook className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => shareOnTikTok(product)}
+                        title="Partilhar no TikTok"
+                        className="hover:bg-secondary"
+                      >
+                        <span className="font-bold text-xs">TT</span>
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"
