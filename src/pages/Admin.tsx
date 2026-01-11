@@ -21,6 +21,7 @@ const emptyProduct: ProductFormData = {
   image: '',
   description: '',
   sizes: [],
+  colors: [],
   featured: false,
 };
 
@@ -35,6 +36,7 @@ export default function Admin() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<ProductFormData>(emptyProduct);
   const [sizesInput, setSizesInput] = useState('');
+  const [colorsInput, setColorsInput] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [saving, setSaving] = useState(false);
@@ -71,9 +73,11 @@ export default function Admin() {
       image: product.image,
       description: product.description,
       sizes: product.sizes,
+      colors: product.colors || [],
       featured: product.featured,
     });
     setSizesInput(product.sizes.join(', '));
+    setColorsInput((product.colors || []).join(', '));
     setImageFile(null);
     setImagePreview(product.image || '');
     setIsEditing(true);
@@ -83,6 +87,7 @@ export default function Admin() {
     setEditingId(null);
     setFormData(emptyProduct);
     setSizesInput('');
+    setColorsInput('');
     setImageFile(null);
     setImagePreview('');
     setIsEditing(true);
@@ -100,7 +105,8 @@ export default function Admin() {
 
     setSaving(true);
     const sizes = sizesInput.split(',').map(s => s.trim()).filter(Boolean);
-    const productData = { ...formData, sizes };
+    const colors = colorsInput.split(',').map(s => s.trim()).filter(Boolean);
+    const productData = { ...formData, sizes, colors };
 
     try {
       if (editingId) {
@@ -115,6 +121,7 @@ export default function Admin() {
       setEditingId(null);
       setFormData(emptyProduct);
       setSizesInput('');
+      setColorsInput('');
       setImageFile(null);
       setImagePreview('');
     } catch (error) {
@@ -398,6 +405,19 @@ export default function Admin() {
                   placeholder="38, 39, 40, 41, 42"
                   className="mt-1.5"
                 />
+              </div>
+
+              <div>
+                <Label>Cores disponíveis (separadas por vírgula)</Label>
+                <Input
+                  value={colorsInput}
+                  onChange={e => setColorsInput(e.target.value)}
+                  placeholder="Preto, Branco, Vermelho, Azul"
+                  className="mt-1.5"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Cores suportadas: Preto, Branco, Vermelho, Azul, Verde, Amarelo, Laranja, Rosa, Roxo, Cinza, Marrom, Bege, Dourado, Prata
+                </p>
               </div>
 
               <div className="flex items-center gap-3">

@@ -1,10 +1,33 @@
-import { ShoppingCart, Eye } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Product } from '@/types/product';
 
 interface ProductCardProps {
   product: Product;
   onBuy: (product: Product) => void;
+}
+
+// Mapeamento de cores
+const colorMap: Record<string, string> = {
+  preto: '#000000',
+  branco: '#FFFFFF',
+  vermelho: '#EF4444',
+  azul: '#3B82F6',
+  verde: '#22C55E',
+  amarelo: '#EAB308',
+  laranja: '#F97316',
+  rosa: '#EC4899',
+  roxo: '#A855F7',
+  cinza: '#6B7280',
+  marrom: '#92400E',
+  bege: '#D4A574',
+  dourado: '#FFD700',
+  prata: '#C0C0C0',
+};
+
+function getColorValue(colorName: string): string {
+  const normalized = colorName.toLowerCase().trim();
+  return colorMap[normalized] || '#888888';
 }
 
 export function ProductCard({ product, onBuy }: ProductCardProps) {
@@ -81,8 +104,29 @@ export function ProductCard({ product, onBuy }: ProductCardProps) {
             </span>
           )}
         </div>
+
+        {/* Colors Preview */}
+        {product.colors && product.colors.length > 0 && (
+          <div className="flex items-center gap-1 mt-3">
+            <span className="text-xs text-muted-foreground mr-1">Cores:</span>
+            {product.colors.slice(0, 5).map(color => (
+              <span
+                key={color}
+                className="w-5 h-5 rounded-full border border-border"
+                style={{ backgroundColor: getColorValue(color) }}
+                title={color}
+              />
+            ))}
+            {product.colors.length > 5 && (
+              <span className="text-xs text-muted-foreground ml-1">
+                +{product.colors.length - 5}
+              </span>
+            )}
+          </div>
+        )}
         
-        {product.sizes.length > 0 && (
+        {/* Sizes Preview */}
+        {product.sizes && product.sizes.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-3">
             {product.sizes.slice(0, 5).map(size => (
               <span key={size} className="px-2 py-1 text-xs bg-secondary rounded-md text-muted-foreground">
