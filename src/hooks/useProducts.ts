@@ -18,7 +18,7 @@ export function useProducts() {
       setProducts([]);
     } else {
       setProducts(
-        (data || []).map((p) => ({
+        (data || []).map((p: any) => ({
           id: p.id,
           name: p.name,
           price: Number(p.price),
@@ -27,7 +27,8 @@ export function useProducts() {
           image: p.image || '',
           description: p.description || '',
           sizes: p.sizes || [],
-          featured: false, // Not in DB yet, default false
+          colors: p.colors || [],
+          featured: false,
         }))
       );
     }
@@ -98,6 +99,7 @@ export function useProducts() {
         category: product.category,
         image: imageUrl,
         sizes: product.sizes,
+        colors: product.colors || [],
       })
       .select()
       .single();
@@ -130,6 +132,7 @@ export function useProducts() {
         category: updates.category,
         image: imageUrl,
         sizes: updates.sizes,
+        colors: updates.colors || [],
       })
       .eq('id', id);
 
