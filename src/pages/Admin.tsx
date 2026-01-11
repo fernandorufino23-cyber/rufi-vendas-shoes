@@ -29,12 +29,15 @@ const ADMIN_USER = 'Rufino';
 const ADMIN_PASS = 'Rufino@123';
 
 export default function Admin() {
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
+  const { products, loading, addProduct, updateProduct, deleteProduct } = useProducts();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<ProductFormData>(emptyProduct);
   const [sizesInput, setSizesInput] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const [saving, setSaving] = useState(false);
 
   // Estado de login
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -71,6 +74,8 @@ export default function Admin() {
       featured: product.featured,
     });
     setSizesInput(product.sizes.join(', '));
+    setImageFile(null);
+    setImagePreview(product.image || '');
     setIsEditing(true);
   };
 
@@ -78,10 +83,12 @@ export default function Admin() {
     setEditingId(null);
     setFormData(emptyProduct);
     setSizesInput('');
+    setImageFile(null);
+    setImagePreview('');
     setIsEditing(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!formData.name || formData.price <= 0) {
       toast({
         title: 'Erro',
@@ -91,21 +98,34 @@ export default function Admin() {
       return;
     }
 
+    setSaving(true);
     const sizes = sizesInput.split(',').map(s => s.trim()).filter(Boolean);
     const productData = { ...formData, sizes };
 
-    if (editingId) {
-      updateProduct(editingId, productData);
-      toast({ title: 'Produto atualizado!', description: formData.name });
-    } else {
-      addProduct(productData);
-      toast({ title: 'Produto adicionado!', description: formData.name });
-    }
+    try {
+      if (editingId) {
+        await updateProduct(editingId, productData, imageFile || undefined);
+        toast({ title: 'Produto atualizado!', description: formData.name });
+      } else {
+        await addProduct(productData, imageFile || undefined);
+        toast({ title: 'Produto adicionado!', description: formData.name });
+      }
 
-    setIsEditing(false);
-    setEditingId(null);
-    setFormData(emptyProduct);
-    setSizesInput('');
+      setIsEditing(false);
+      setEditingId(null);
+      setFormData(emptyProduct);
+      setSizesInput('');
+      setImageFile(null);
+      setImagePreview('');
+    } catch (error) {
+      toast({
+        title: 'Erro',
+        description: 'Ocorreu um erro ao salvar o produto.',
+        variant: 'destructive',
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDelete = (id: string, name: string) => {
@@ -342,18 +362,19 @@ export default function Admin() {
                   onChange={e => {
                     const file = e.target.files?.[0];
                     if (file) {
+                      setImageFile(file);
                       const reader = new FileReader();
                       reader.onloadend = () => {
-                        setFormData({ ...formData, image: reader.result as string });
+                        setImagePreview(reader.result as string);
                       };
                       reader.readAsDataURL(file);
                     }
                   }}
                   className="mt-1.5"
                 />
-                {formData.image && (
+                {imagePreview && (
                   <div className="mt-2 w-20 h-20 rounded-lg overflow-hidden border border-border">
-                    <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                    <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                   </div>
                 )}
               </div>
@@ -390,9 +411,13 @@ export default function Admin() {
                 </Label>
               </div>
 
-              <Button onClick={handleSave} className="w-full bg-gradient-primary hover:opacity-90 mt-4">
+              <Button 
+                onClick={handleSave} 
+                className="w-full bg-gradient-primary hover:opacity-90 mt-4"
+                disabled={saving}
+              >
                 <Save className="w-4 h-4 mr-2" />
-                Salvar Produto
+                {saving ? 'Salvando...' : 'Salvar Produto'}
               </Button>
             </div>
           </div>
