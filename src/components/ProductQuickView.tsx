@@ -50,14 +50,19 @@ export function ProductQuickView({ product, open, onClose }: ProductQuickViewPro
     const sizeText = selectedSize ? `Tamanho: ${selectedSize}` : 'Tamanho: Não especificado';
     const colorText = selectedColor ? `Cor: ${selectedColor}` : 'Cor: Não especificada';
     
+    // Primeiro envia a imagem como link separado para preview
+    const imageMessage = product.image 
+      ? `📸 *VER IMAGEM DO PRODUTO:*\n${product.image}\n\n---\n\n`
+      : '';
+    
     const message = encodeURIComponent(
-      `Olá! Tenho interesse no produto:\n\n` +
-      `🛍️ *${product.name}*\n` +
-      `💰 Preço: ${product.price.toLocaleString('pt-AO')} Kz\n` +
-      `📏 ${sizeText}\n` +
-      `🎨 ${colorText}\n\n` +
-      `📸 Imagem: ${product.image || 'Não disponível'}\n\n` +
-      `Gostaria de finalizar a compra!`
+      imageMessage +
+      `🛒 *NOVO PEDIDO*\n\n` +
+      `🛍️ *Produto:* ${product.name}\n` +
+      `💰 *Preço:* ${product.price.toLocaleString('pt-AO')} Kz\n` +
+      `📏 *${sizeText}*\n` +
+      `🎨 *${colorText}*\n\n` +
+      `✅ Gostaria de finalizar esta compra!`
     );
     
     window.open(`https://wa.me/244935126871?text=${message}`, '_blank');
