@@ -142,27 +142,78 @@ export default function Admin() {
     }
   };
 
-  // Partilhar no Facebook
+  // Partilhar no Facebook - Abre área de publicações com texto e link da imagem
   const shareOnFacebook = (product: Product) => {
-    const shareUrl = window.location.origin;
-    const shareText = `🔥 ${product.name} - ${product.price.toLocaleString('pt-AO')} Kz\n\n${product.description || 'Confira este produto incrível!'}\n\n📱 Encomende pelo WhatsApp: +244 935 126 871`;
+    const productInfo = `🔥 ${product.name}
+
+💰 Preço: ${product.price.toLocaleString('pt-AO')} Kz${product.originalPrice ? ` (antes: ${product.originalPrice.toLocaleString('pt-AO')} Kz)` : ''}
+
+${product.description || '✨ Produto de alta qualidade!'}
+
+📏 Tamanhos: ${product.sizes?.join(', ') || 'Consulte disponibilidade'}
+🎨 Cores: ${product.colors?.join(', ') || 'Várias cores'}
+
+📱 Encomende via WhatsApp: +244 935 126 871
+
+🛒 Visite nossa loja: ${window.location.origin}
+
+#RUFIVENDAS #Angola #Moda #Tênis`;
+
+    // Copia o texto para o clipboard
+    navigator.clipboard.writeText(productInfo).then(() => {
+      toast({ 
+        title: '✅ Texto copiado!', 
+        description: 'Cole o texto na sua publicação do Facebook. A página de criação será aberta.' 
+      });
+    });
+
+    // Se tiver imagem, tenta abrir com a imagem no URL
+    const imageUrl = product.image || '';
     
-    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`;
-    window.open(facebookUrl, '_blank', 'width=600,height=400');
-    
-    toast({ title: 'Facebook', description: `Partilhando "${product.name}" no Facebook` });
+    // Abre o Facebook na área de criação de post/publicação
+    // O URL da imagem é passado para facilitar o download
+    if (imageUrl) {
+      // Abre a imagem em nova aba para download fácil
+      window.open(imageUrl, '_blank');
+      
+      // Pequeno delay e abre o Facebook
+      setTimeout(() => {
+        window.open('https://www.facebook.com/', '_blank');
+      }, 500);
+      
+      toast({ 
+        title: '📷 Imagem aberta!', 
+        description: 'Salve a imagem e anexe na sua publicação do Facebook.' 
+      });
+    } else {
+      window.open('https://www.facebook.com/', '_blank');
+    }
   };
 
   // Partilhar todos os produtos no Facebook
   const shareAllOnFacebook = () => {
-    const shareUrl = window.location.origin;
-    const productList = products.slice(0, 5).map(p => `• ${p.name} - ${p.price.toLocaleString('pt-AO')} Kz`).join('\n');
-    const shareText = `🛍️ RUFIVENDAS - Produtos em Destaque!\n\n${productList}\n\n📱 Encomende pelo WhatsApp: +244 935 126 871`;
+    const productList = products.slice(0, 5).map(p => 
+      `• ${p.name} - ${p.price.toLocaleString('pt-AO')} Kz`
+    ).join('\n');
     
-    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`;
-    window.open(facebookUrl, '_blank', 'width=600,height=400');
+    const shareText = `🛍️ RUFIVENDAS - Produtos em Destaque!
+
+${productList}
+
+📱 Encomende via WhatsApp: +244 935 126 871
+🛒 Visite: ${window.location.origin}
+
+#RUFIVENDAS #Angola #Moda #Tênis #Sapatos`;
     
-    toast({ title: 'Facebook', description: 'Partilhando todos os produtos no Facebook' });
+    navigator.clipboard.writeText(shareText).then(() => {
+      toast({ 
+        title: '✅ Texto copiado!', 
+        description: 'Cole o texto na sua publicação do Facebook.' 
+      });
+      window.open('https://www.facebook.com/', '_blank');
+    }).catch(() => {
+      window.open('https://www.facebook.com/', '_blank');
+    });
   };
 
   // Partilhar no TikTok (abre o app ou web para criar conteúdo)
