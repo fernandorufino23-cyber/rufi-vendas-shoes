@@ -77,7 +77,7 @@ export function ProductCard({ product, onBuy }: ProductCardProps) {
             className="bg-gradient-primary hover:opacity-90 shadow-glow"
           >
             <ShoppingCart className="w-4 h-4 mr-2" />
-            Comprar
+            Fazer Pedido
           </Button>
         </div>
       </div>

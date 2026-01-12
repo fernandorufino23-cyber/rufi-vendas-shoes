@@ -216,7 +216,7 @@ export function ProductQuickView({ product, open, onClose }: ProductQuickViewPro
             className="w-full bg-gradient-primary hover:opacity-90 shadow-glow h-12 text-lg"
           >
             <ShoppingCart className="w-5 h-5 mr-2" />
-            Comprar via WhatsApp
+            Fazer Pedido via WhatsApp
           </Button>
         </div>
       </DialogContent>
