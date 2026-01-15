@@ -142,52 +142,25 @@ export default function Admin() {
     }
   };
 
-  // Partilhar no Facebook - Abre área de publicações com texto e link da imagem
+  // Partilhar no Facebook - Usa o sharer com meta tags OG dinâmicas
   const shareOnFacebook = (product: Product) => {
-    const productInfo = `🔥 ${product.name}
-
-💰 Preço: ${product.price.toLocaleString('pt-AO')} Kz${product.originalPrice ? ` (antes: ${product.originalPrice.toLocaleString('pt-AO')} Kz)` : ''}
-
-${product.description || '✨ Produto de alta qualidade!'}
-
-📏 Tamanhos: ${product.sizes?.join(', ') || 'Consulte disponibilidade'}
-🎨 Cores: ${product.colors?.join(', ') || 'Várias cores'}
-
-📱 Encomende via WhatsApp: +244 935 126 871
-
-🛒 Visite nossa loja: ${window.location.origin}
-
-#RUFIVENDAS #Angola #Moda #Tênis`;
-
-    // Copia o texto para o clipboard
-    navigator.clipboard.writeText(productInfo).then(() => {
-      toast({ 
-        title: '✅ Texto copiado!', 
-        description: 'Cole o texto na sua publicação do Facebook. A página de criação será aberta.' 
-      });
-    });
-
-    // Se tiver imagem, tenta abrir com a imagem no URL
-    const imageUrl = product.image || '';
+    // URL da edge function que gera página com meta tags Open Graph
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const shareUrl = `${supabaseUrl}/functions/v1/product-share?id=${product.id}`;
     
-    // Abre o Facebook na área de criação de post/publicação
-    // O URL da imagem é passado para facilitar o download
-    if (imageUrl) {
-      // Abre a imagem em nova aba para download fácil
-      window.open(imageUrl, '_blank');
-      
-      // Pequeno delay e abre o Facebook
-      setTimeout(() => {
-        window.open('https://www.facebook.com/', '_blank');
-      }, 500);
-      
-      toast({ 
-        title: '📷 Imagem aberta!', 
-        description: 'Salve a imagem e anexe na sua publicação do Facebook.' 
-      });
-    } else {
-      window.open('https://www.facebook.com/', '_blank');
-    }
+    // Texto descritivo do produto
+    const shareText = `🔥 ${product.name} - ${product.price.toLocaleString('pt-AO')} Kz\n\n${product.description || 'Confira este produto incrível!'}\n\n📱 WhatsApp: +244 935 126 871`;
+    
+    // Abre o Facebook Sharer com o link que contém as meta tags OG
+    // O Facebook vai buscar automaticamente a imagem do produto
+    const facebookSharerUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`;
+    
+    window.open(facebookSharerUrl, '_blank', 'width=600,height=500');
+    
+    toast({ 
+      title: '📤 Partilhar no Facebook', 
+      description: `A partilhar "${product.name}" com imagem e descrição.` 
+    });
   };
 
   // Partilhar todos os produtos no Facebook
