@@ -144,9 +144,12 @@ export default function Admin() {
 
   // Partilhar no Facebook - Usa o sharer com meta tags OG dinâmicas
   const shareOnFacebook = (product: Product) => {
+    // URL atual do site (onde a app está hospedada)
+    const currentSiteUrl = window.location.origin;
+    
     // URL da edge function que gera página com meta tags Open Graph
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const shareUrl = `${supabaseUrl}/functions/v1/product-share?id=${product.id}`;
+    const shareUrl = `${supabaseUrl}/functions/v1/product-share?id=${product.id}&site=${encodeURIComponent(currentSiteUrl)}`;
     
     // Texto descritivo do produto
     const shareText = `🔥 ${product.name} - ${product.price.toLocaleString('pt-AO')} Kz\n\n${product.description || 'Confira este produto incrível!'}\n\n📱 WhatsApp: +244 935 126 871`;
