@@ -13,7 +13,8 @@ Deno.serve(async (req) => {
   try {
     const url = new URL(req.url)
     const productId = url.searchParams.get('id')
-    const siteUrl = url.searchParams.get('site') || url.origin
+    // URL real do site hospedado no Vercel
+    const siteUrl = url.searchParams.get('site') || 'https://rufi-vendas-shoes.vercel.app'
     
     console.log('Product share request:', { productId, siteUrl })
     
