@@ -1,28 +1,16 @@
-import { Star, TrendingUp } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 import { Product } from '@/types/product';
 import { ProductCard } from './ProductCard';
-import { useToast } from '@/hooks/use-toast';
 
 interface FeaturedProductsProps {
   products: Product[];
+  onProductSelect: (product: Product) => void;
 }
 
-export function FeaturedProducts({ products }: FeaturedProductsProps) {
-  const { toast } = useToast();
+export function FeaturedProducts({ products, onProductSelect }: FeaturedProductsProps) {
   const featured = products.filter(p => p.featured).slice(0, 3);
 
   if (featured.length === 0) return null;
-
-  const handleBuy = (product: Product) => {
-    const message = encodeURIComponent(
-      `Olá! Tenho interesse no produto:\n\n*${product.name}*\nPreço: ${product.price.toLocaleString('pt-AO')} Kz\n\nGostaria de mais informações!`
-    );
-    window.open(`https://wa.me/244935126871?text=${message}`, '_blank');
-    toast({
-      title: "Redirecionando...",
-      description: "Você será direcionado para o WhatsApp.",
-    });
-  };
 
   return (
     <section className="py-20 bg-secondary/30">
@@ -42,7 +30,7 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
               className="animate-slide-up"
               style={{ animationDelay: `${index * 0.15}s` }}
             >
-              <ProductCard product={product} onBuy={handleBuy} />
+              <ProductCard product={product} onBuy={onProductSelect} />
             </div>
           ))}
         </div>
