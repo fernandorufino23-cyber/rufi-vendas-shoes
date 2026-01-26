@@ -1,45 +1,42 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useEffect, useState, useCallback } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Product } from '@/types/product';
 
 export function useProductModal(products: Product[]) {
   const navigate = useNavigate();
-  const location = useLocation();
   const [searchParams] = useSearchParams();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   // Check URL for product parameter on mount and when URL changes
   useEffect(() => {
     const productId = searchParams.get('product');
+    console.log('useProductModal: checking URL, productId =', productId, 'products count =', products.length);
+    
     if (productId && products.length > 0) {
       const product = products.find(p => p.id === productId);
+      console.log('useProductModal: found product =', product?.name);
       if (product) {
         setSelectedProduct(product);
       }
-    } else {
+    } else if (!productId) {
       setSelectedProduct(null);
     }
   }, [searchParams, products]);
 
-  const openProduct = (product: Product) => {
-    // Create slug from product name
-    const slug = product.name
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
+  const openProduct = useCallback((product: Product) => {
+    console.log('useProductModal: openProduct called for', product.name, product.id);
     
     // Update URL with product parameter
     navigate(`/?product=${product.id}`, { replace: false });
     setSelectedProduct(product);
-  };
+  }, [navigate]);
 
-  const closeProduct = () => {
+  const closeProduct = useCallback(() => {
+    console.log('useProductModal: closeProduct called');
     // Remove product from URL
     navigate('/', { replace: false });
     setSelectedProduct(null);
-  };
+  }, [navigate]);
 
   return {
     selectedProduct,
